@@ -2,6 +2,7 @@ import QtQuick 2.9
 import QtQuick.Window 2.2
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
+import QtQuick.Layouts 1.3
 
 Window {
     id: window
@@ -22,7 +23,12 @@ Window {
 
         TextArea {
             id: contentsArea
-            text: notesModel.get(notesView.currentIndex).note
+            text: {
+                if(notesView.currentIndex >= 0)
+                    return notesModel.get(notesView.currentIndex).note
+                else
+                    return ""
+            }
             renderType: Text.NativeRendering
             textFormat: Text.RichText
             font.family: "Arial"
@@ -33,11 +39,15 @@ Window {
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             font.pointSize: 14
 
-            onTextChanged: nm.get(notesView.currentIndex).note = text
+            onTextChanged: {
+                if(notesView.currentIndex >= 0)
+                    notesModel.get(notesView.currentIndex).note = text
+            }
         }
     }
 
     Rectangle {
+        id: rectangle
         color: "#f6f6f6"
 
         width: 200
@@ -50,7 +60,7 @@ Window {
 
         ListView {
             id: notesView
-            anchors.bottomMargin: 0
+            anchors.bottomMargin: 25
             model: notesModel
             anchors.fill: parent
             highlight: Rectangle { color: "#e6e6e6" }
@@ -64,24 +74,102 @@ Window {
                 }
             }
         }
-    }
 
+        // Нижний бар с кнопками
+        Rectangle {
+            id: rectangle1
+            height: 25
+            color: "#e6e6e6"
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+            anchors.left: parent.left
+            anchors.leftMargin: 0
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 0
 
+            // Кнопка добавления заметки
+            ItemDelegate {
+                id: addButton
+                width: 40
+                height: 25
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 0
+                anchors.left: parent.left
+                anchors.leftMargin: 0
+                highlighted: false
+                padding: 0
 
-    RoundButton {
-        id: addNoteButton
-        x: 10
-        y: 402
-        text: "+"
-        highlighted: true
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 10
-        anchors.left: parent.left
-        anchors.leftMargin: 10
+                Text {
+                    anchors.centerIn: parent
+                    text: "+"
+                    font.pointSize: 12
+                }
 
-        onClicked: {
-            notesModel.append( { "name": "New note", "type": "note", "note": "" } );
-            notesView.currentIndex = notesModel.rowCount()-1;
+                // Добавление новой заметки
+                onClicked: {
+                    notesModel.append( { "name": "New note", "type": "note", "note": "" } );
+                    notesView.currentIndex = notesModel.rowCount()-1;
+                }
+            }
+
+            // Кнопка удления заметки
+            ItemDelegate {
+                id: removeButton
+                width: 40
+                height: 25
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 0
+                anchors.left: addButton.right
+                anchors.leftMargin: 0
+                padding: 0
+                highlighted: false
+
+                Text {
+                    anchors.centerIn: parent
+                    text: "−"
+                    font.pointSize: 12
+                }
+
+                // Удаление текущей выбранной заметки
+                onClicked: {
+                    notesModel.remove(notesView.currentIndex, 1);
+                    notesView.currentIndex = -1;
+                }
+            }
+
+            // Кнопка Меню
+            ItemDelegate {
+                id: optionsButton
+                x: -1
+                y: 6
+                width: 40
+                height: 25
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                padding: 0
+                highlighted: false
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 0
+
+                Text {
+                    anchors.centerIn: parent
+                    text: "⋯"
+                    font.pointSize: 18
+                }
+
+                onClicked: {
+                    optionsMenu.open()
+                }
+            }
+
+            // Само меню
+            Menu {
+                id: optionsMenu
+
+                MenuItem {
+                    text: "About"
+                }
+            }
         }
     }
 
