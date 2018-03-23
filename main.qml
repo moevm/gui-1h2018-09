@@ -10,6 +10,8 @@ Window {
     height: 480
     title: qsTr("marxx")
 
+    property var nm: notesModel
+
     ScrollView {
         id: scrollView
         rightPadding: 5
@@ -20,7 +22,7 @@ Window {
 
         TextArea {
             id: contentsArea
-            text: "Enter your notes <b>here</b>..."
+            text: notesModel.get(notesView.currentIndex).note
             renderType: Text.NativeRendering
             textFormat: Text.RichText
             font.family: "Arial"
@@ -30,6 +32,8 @@ Window {
             selectByMouse: true
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             font.pointSize: 14
+
+            onTextChanged: nm.get(notesView.currentIndex).note = text
         }
     }
 
@@ -49,10 +53,15 @@ Window {
             anchors.bottomMargin: 0
             model: notesModel
             anchors.fill: parent
+            highlight: Rectangle { color: "#e6e6e6" }
 
             delegate: ItemDelegate {
                 width: parent.width
                 text: name
+
+                onClicked: {
+                    notesView.currentIndex = index
+                }
             }
         }
     }
@@ -60,7 +69,7 @@ Window {
 
 
     RoundButton {
-        id: roundButton
+        id: addNoteButton
         x: 10
         y: 402
         text: "+"
@@ -69,14 +78,19 @@ Window {
         anchors.bottomMargin: 10
         anchors.left: parent.left
         anchors.leftMargin: 10
+
+        onClicked: {
+            notesModel.append( { "name": "New note", "type": "note", "note": "" } );
+            notesView.currentIndex = notesModel.rowCount()-1;
+        }
     }
 
     ListModel {
         id: notesModel
 
-        ListElement { name: "note 1"; type: "note"; text: "this is note 1" }
-        ListElement { name: "note 2"; type: "note"; text: "this is note 2" }
-        ListElement { name: "note 3"; type: "note"; text: "this is note 3" }
+        ListElement { name: "note 1"; type: "note"; note: "this is note 1" }
+        ListElement { name: "note 2"; type: "note"; note: "this is note 2" }
+        ListElement { name: "note 3"; type: "note"; note: "this is note 3" }
     }
 
 }
