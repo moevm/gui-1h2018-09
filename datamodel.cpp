@@ -1,13 +1,13 @@
-#include "todomodel.h"
-#include "todolist.h"
+#include "datamodel.h"
+#include "datalist.h"
 
-ToDoModel::ToDoModel(QObject *parent)
+DataModel::DataModel(QObject *parent)
     : QAbstractListModel(parent),
       mList(nullptr)
 {
 }
 
-int ToDoModel::rowCount(const QModelIndex &parent) const
+int DataModel::rowCount(const QModelIndex &parent) const
 {
     // For list models only the root node (an invalid parent) should return the list's size. For all
     // other (valid) parents, rowCount() should return 0 so that it does not become a tree model.
@@ -17,38 +17,34 @@ int ToDoModel::rowCount(const QModelIndex &parent) const
     return mList->items().size();
 }
 
-QVariant ToDoModel::data(const QModelIndex &index, int role) const
+QVariant DataModel::data(const QModelIndex &index, int role) const
 {
 
     if (!index.isValid() || !mList)
         return QVariant();
 
-    const ToDoItem item =  mList->items().at(index.row());
+    const DataItem item =  mList->items().at(index.row());
     switch(role){
-    case DoneRole:
-        return QVariant(item.done);
     case DescriptionRole:
-        return QVariant(item.text);
+        return QVariant(item.textDescription);
     case TextPane:
         return QVariant(item.textPane);
     }
     return QVariant();
 }
 
-bool ToDoModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool DataModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
 
     if(!mList)
         return false;
 
-    ToDoItem item = mList->items().at(index.row());
+    DataItem item = mList->items().at(index.row());
 
     switch(role){
-    case DoneRole:
-        item.done = value.toBool();
-        break;
     case DescriptionRole:
-        item.text = value.toString();
+        item.textDescription = value.toString();
+        break;
     case TextPane:
         item.textPane = value.toString();
         break;
@@ -62,7 +58,7 @@ bool ToDoModel::setData(const QModelIndex &index, const QVariant &value, int rol
     return false;
 }
 
-Qt::ItemFlags ToDoModel::flags(const QModelIndex &index) const
+Qt::ItemFlags DataModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
         return Qt::NoItemFlags;
@@ -70,23 +66,22 @@ Qt::ItemFlags ToDoModel::flags(const QModelIndex &index) const
     return Qt::ItemIsEditable;
 }
 
-QHash<int, QByteArray> ToDoModel::roleNames() const
+QHash<int, QByteArray> DataModel::roleNames() const
 {
     QHash<int, QByteArray> names;
 
-    names[DoneRole] = "done";
-    names[DescriptionRole] = "text";
+    names[DescriptionRole] = "textDescription";
     names[TextPane] = "textPane";
 
     return names;
 }
 
-ToDoList *ToDoModel::list() const
+DataList *DataModel::list() const
 {
     return mList;
 }
 
-void ToDoModel::setList(ToDoList *list)
+void DataModel::setList(DataList *list)
 {
     beginResetModel();
 
@@ -96,19 +91,19 @@ void ToDoModel::setList(ToDoList *list)
     mList = list;
 
     if(mList) {
-        connect(mList, &ToDoList::preItemAppended, this, [=]() {
+        connect(mList, &DataList::preItemAppended, this, [=]() {
             const int index = mList->items().size();
             beginInsertRows(QModelIndex(), index, index);
         });
 
-        connect(mList, &ToDoList::postItemAppended, this, [=]() {
+        connect(mList, &DataList::postItemAppended, this, [=]() {
             endInsertRows();
         });
 
-        connect(mList, &ToDoList::preItemRemoved, this, [=](int index) {
+        connect(mList, &DataList::preItemRemoved, this, [=](int index) {
             beginRemoveRows(QModelIndex(), index, index);
         });
-        connect(mList, &ToDoList::postItemRemoved, this, [=]() {
+        connect(mList, &DataList::postItemRemoved, this, [=]() {
             endRemoveRows();
         });
 

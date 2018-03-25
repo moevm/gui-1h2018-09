@@ -1,26 +1,25 @@
-#ifndef TODOLIST_H
-#define TODOLIST_H
+#ifndef DATALIST_H
+#define DATALIST_H
 
 #include <QObject>
 #include <QVector>
 
-struct ToDoItem
+struct DataItem
 {
-    bool done;
-    QString text;
+    QString textDescription;
     QString textPane;
 };
 
 
-class ToDoList : public QObject
+class DataList : public QObject
 {
     Q_OBJECT
 public:
-    explicit ToDoList(QObject *parent = nullptr);
+    explicit DataList(QObject *parent = nullptr);
 
-    QVector<ToDoItem> items() const;
+    QVector<DataItem> items() const;
 
-    bool setItemAt(int index, const ToDoItem &item);
+    bool setItemAt(int index, const DataItem &item);
 
 signals:
     void preItemAppended();
@@ -34,7 +33,7 @@ public slots:
     void removeCompletedItems();
 
 private:
-    QVector<ToDoItem> mItems;
+    QVector<DataItem> mItems;
 };
 
-#endif // TODOLIST_H
+#endif

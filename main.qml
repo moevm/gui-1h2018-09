@@ -3,7 +3,7 @@ import QtQuick.Window 2.2
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Layouts 1.3
-import ToDo 1.0
+import Data 1.0
 Window {
     id: window
     visible: true
@@ -66,7 +66,7 @@ Window {
 
             delegate: ItemDelegate {
                 width: parent.width
-                text: model.text
+                text: model.textDescription
 
                 onClicked: {
                     notesView.currentIndex = index
@@ -106,7 +106,7 @@ Window {
 
                 // Добавление новой заметки
                 onClicked: {
-                    toDoList.appendItem()
+                    dataList.appendItem()
 //                    notesView.currentIndex = notesModel.rowCount()-1;
                 }
             }
@@ -172,9 +172,9 @@ Window {
         }
     }
 
-    ToDoModel {
+    DataModel {
         id: notesModel
-        list: toDoList
+        list: dataList
 
 //        ListElement { name: "note 1"; type: "note"; note: "this is note 1" }
 //        ListElement { name: "note 2"; type: "note"; note: "this is note 2" }

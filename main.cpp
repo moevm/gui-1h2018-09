@@ -2,8 +2,8 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
-#include "todomodel.h"
-#include "todolist.h"
+#include "datamodel.h"
+#include "datalist.h"
 
 int main(int argc, char *argv[])
 {
@@ -13,14 +13,14 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    qmlRegisterType<ToDoModel>("ToDo", 1, 0, "ToDoModel");
-    qmlRegisterUncreatableType<ToDoList>("ToDo", 1, 0, "toDoList", QStringLiteral("CANT CREATE TODO IN QML"));
+    qmlRegisterType<DataModel>("Data", 1, 0, "DataModel");
+    qmlRegisterUncreatableType<DataList>("Data", 1, 0, "dataList", QStringLiteral("CANT CREATE TODO IN QML"));
 
-    ToDoList toDoList;
+    DataList dataList;
 
     QQmlApplicationEngine engine;
 
-    engine.rootContext()->setContextProperty(QStringLiteral("toDoList"), &toDoList);
+    engine.rootContext()->setContextProperty(QStringLiteral("dataList"), &dataList);
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty())
