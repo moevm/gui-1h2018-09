@@ -3,7 +3,7 @@ import QtQuick.Window 2.2
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Layouts 1.3
-
+import ToDo 1.0
 Window {
     id: window
     visible: true
@@ -14,6 +14,7 @@ Window {
     property var nm: notesModel
 
     ScrollView {
+
         id: scrollView
         rightPadding: 5
         leftPadding: 5
@@ -21,14 +22,12 @@ Window {
         anchors.leftMargin: 200
         anchors.fill: parent
 
+
         TextArea {
+            color: "#000"
             id: contentsArea
-            text: {
-                if(notesView.currentIndex >= 0)
-                    return notesModel.get(notesView.currentIndex).note
-                else
-                    return ""
-            }
+            text: notesModel.textPane;
+
             renderType: Text.NativeRendering
             textFormat: Text.RichText
             font.family: "Arial"
@@ -67,7 +66,7 @@ Window {
 
             delegate: ItemDelegate {
                 width: parent.width
-                text: name
+                text: model.text
 
                 onClicked: {
                     notesView.currentIndex = index
@@ -79,7 +78,7 @@ Window {
         Rectangle {
             id: rectangle1
             height: 25
-            color: "#e6e6e6"
+            color: "#aaa"
             anchors.right: parent.right
             anchors.rightMargin: 0
             anchors.left: parent.left
@@ -107,8 +106,8 @@ Window {
 
                 // Добавление новой заметки
                 onClicked: {
-                    notesModel.append( { "name": "New note", "type": "note", "note": "" } );
-                    notesView.currentIndex = notesModel.rowCount()-1;
+                    toDoList.appendItem()
+//                    notesView.currentIndex = notesModel.rowCount()-1;
                 }
             }
 
@@ -173,12 +172,13 @@ Window {
         }
     }
 
-    ListModel {
+    ToDoModel {
         id: notesModel
+        list: toDoList
 
-        ListElement { name: "note 1"; type: "note"; note: "this is note 1" }
-        ListElement { name: "note 2"; type: "note"; note: "this is note 2" }
-        ListElement { name: "note 3"; type: "note"; note: "this is note 3" }
+//        ListElement { name: "note 1"; type: "note"; note: "this is note 1" }
+//        ListElement { name: "note 2"; type: "note"; note: "this is note 2" }
+//        ListElement { name: "note 3"; type: "note"; note: "this is note 3" }
     }
 
 }
