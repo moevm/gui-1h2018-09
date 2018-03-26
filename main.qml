@@ -25,7 +25,7 @@ Window {
             id: contentsArea
             text: {
                 if(notesView.currentIndex >= 0)
-                    return notesModel.get(notesView.currentIndex).note
+                    return notesModel.data(notesModel.index(notesView.currentIndex, 0), 258)
                 else
                     return ""
             }
@@ -40,8 +40,15 @@ Window {
             font.pointSize: 14
 
             onTextChanged: {
-                if(notesView.currentIndex >= 0)
-                    notesModel.get(notesView.currentIndex).note = text
+                if(notesView.currentIndex >= 0) {
+                    notesModel.setData(notesModel.index(notesView.currentIndex, 0), text, 258)
+
+                    var txt = contentsArea.getText(0, contentsArea.length > 30 ? 30 : contentsArea.length)
+                    //console.log(contentsArea.text)
+                    notesModel.setData(notesModel.index(notesView.currentIndex, 0), txt == "" ? "New note" : txt, 257)
+                }
+
+
             }
         }
     }
@@ -67,6 +74,7 @@ Window {
 
             delegate: ItemDelegate {
                 width: parent.width
+                clip: true
                 text: name
 
                 onClicked: {
@@ -107,8 +115,8 @@ Window {
 
                 // Добавление новой заметки
                 onClicked: {
-                    notesModel.append( { "name": "New note", "type": "note", "note": "" } );
-                    notesView.currentIndex = notesModel.rowCount()-1;
+                    notesModel.append("New Note", "");
+                    notesView.currentIndex = notesModel.rows()-1;
                 }
             }
 
@@ -132,7 +140,7 @@ Window {
 
                 // Удаление текущей выбранной заметки
                 onClicked: {
-                    notesModel.remove(notesView.currentIndex, 1);
+                    notesModel.remove(notesView.currentIndex);
                     notesView.currentIndex = -1;
                 }
             }
@@ -171,14 +179,6 @@ Window {
                 }
             }
         }
-    }
-
-    ListModel {
-        id: notesModel
-
-        ListElement { name: "note 1"; type: "note"; note: "this is note 1" }
-        ListElement { name: "note 2"; type: "note"; note: "this is note 2" }
-        ListElement { name: "note 3"; type: "note"; note: "this is note 3" }
     }
 
 }

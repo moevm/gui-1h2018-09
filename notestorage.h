@@ -1,0 +1,31 @@
+#ifndef NOTESTORAGE_H
+#define NOTESTORAGE_H
+
+#include <QAbstractListModel>
+#include "noteobject.h"
+
+class NoteStorage : public QAbstractListModel
+{
+    Q_OBJECT
+
+    QList<NoteObject*> m_notes;
+public:
+    NoteStorage(QObject *parent = 0);
+
+    enum NoteRoles {
+        NameRole = Qt::UserRole + 1,
+        NoteRole
+    };
+
+    Q_INVOKABLE void append(QString name, QString note);
+    Q_INVOKABLE void remove(int index);
+
+    Q_INVOKABLE QHash<int, QByteArray> roleNames() const;
+    Q_INVOKABLE int rowCount(const QModelIndex &parent) const;
+    Q_INVOKABLE int rows() const;
+    Q_INVOKABLE QVariant data(const QModelIndex &index, int role) const;
+    Q_INVOKABLE bool setData(const QModelIndex &index, const QVariant &value, int role);
+    Q_INVOKABLE Qt::ItemFlags flags(const QModelIndex &index) const;
+};
+
+#endif // NOTESTORAGE_H
