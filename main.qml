@@ -3,6 +3,7 @@ import QtQuick.Window 2.2
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 import QtQuick.Layouts 1.3
+import QtQuick.Dialogs 1.2
 
 Window {
     id: window
@@ -175,10 +176,56 @@ Window {
                 id: optionsMenu
 
                 MenuItem {
-                    text: "About"
+                    text: "Open"
+                    onTriggered: fileOpenDialog.open()
+                }
+                MenuItem {
+                    text: "Save"
+                    onTriggered: fileSaveDialog.open()
                 }
             }
         }
+
     }
 
+    FileDialog {
+        id: fileOpenDialog
+        title: "Choose a file"
+        folder: shortcuts.home
+        onAccepted: openNote(fileOpenDialog.fileUrl)
+    }
+
+    FileDialog {
+        id: fileSaveDialog
+        title: "Choose a path"
+        selectExisting: false
+        nameFilters: ["Text files (*.txt)"]
+        onAccepted: saveFile(fileSaveDialog.fileUrl,contentsArea.text)
+    }
+
+    function openNote(fileUrl){
+       var fileContent = openFile(fileUrl);
+        notesModel.append("opened note", fileContent);
+        notesView.currentIndex = notesModel.rows()-1;
+    }
+
+    function openFile(fileUrl) {
+        var request = new XMLHttpRequest();
+        request.open("GET", fileUrl, false)
+        request.send(null)
+        return request.responseText
+
+    }
+
+    function saveFile(fileUrl, text) {
+        console.log(text);
+        var request = new XMLHttpRequest();
+        request.open("PUT", fileUrl, false);
+        request.send(text);
+        return request.status;
+    }
+
+    function cleanText(text) {
+        return
+    }
 }
