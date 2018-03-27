@@ -5,14 +5,16 @@ import QtQuick.Controls.Material 2.2
 import QtQuick.Layouts 1.3
 import QtQuick.Dialogs 1.2
 
-Window {
+ApplicationWindow {
     id: window
     visible: true
     width: 840
     height: 480
     title: qsTr("marxx")
 
-    property var nm: notesModel
+    onClosing: {
+        notesModel.saveToDefault()
+    }
 
     ScrollView {
         id: scrollView
@@ -176,12 +178,26 @@ Window {
                 id: optionsMenu
 
                 MenuItem {
-                    text: "Open"
+                    text: "Export note..."
+
+                }
+
+                MenuSeparator { }
+
+                MenuItem {
+                    text: "Import library..."
                     onTriggered: fileOpenDialog.open()
                 }
+
                 MenuItem {
-                    text: "Save"
+                    text: "Export library..."
                     onTriggered: fileSaveDialog.open()
+                }
+
+                MenuSeparator { }
+
+                MenuItem {
+                    text: "About"
                 }
             }
         }
@@ -190,42 +206,28 @@ Window {
 
     FileDialog {
         id: fileOpenDialog
-        title: "Choose a file"
+        title: "Choose a library"
         folder: shortcuts.home
-        onAccepted: openNote(fileOpenDialog.fileUrl)
+        onAccepted: importLibrary(fileOpenDialog.fileUrl)
     }
 
     FileDialog {
         id: fileSaveDialog
         title: "Choose a path"
         selectExisting: false
-        nameFilters: ["Text files (*.txt)"]
-        onAccepted: saveFile(fileSaveDialog.fileUrl,contentsArea.text)
+        nameFilters: ["Marxx library (*.marxxlib)"]
+        onAccepted: exportLibrary(fileSaveDialog.fileUrl)
     }
 
-    function openNote(fileUrl){
-       var fileContent = openFile(fileUrl);
-        notesModel.append("opened note", fileContent);
-        notesView.currentIndex = notesModel.rows()-1;
+    function importLibrary(fileUrl) {
+        notesModel.unpack(fileUrl, true)
+
+        // Обновляем вид списка после обновления модели
+        notesView.model = 0;
+        notesView.model = notesModel
     }
 
-    function openFile(fileUrl) {
-        var request = new XMLHttpRequest();
-        request.open("GET", fileUrl, false)
-        request.send(null)
-        return request.responseText
-
-    }
-
-    function saveFile(fileUrl, text) {
-        console.log(text);
-        var request = new XMLHttpRequest();
-        request.open("PUT", fileUrl, false);
-        request.send(text);
-        return request.status;
-    }
-
-    function cleanText(text) {
-        return
+    function exportLibrary(fileUrl) {
+        notesModel.pack(fileUrl, true)
     }
 }

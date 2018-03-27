@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QtQml>
+#include <QDebug>
 
 #include "noteobject.h"
 #include "notestorage.h"
@@ -13,9 +14,8 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-
     NoteStorage noteStorage;
-    noteStorage.append("New note", "");
+    //noteStorage.append("New note", "");
 
     QQmlApplicationEngine engine;
 

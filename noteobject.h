@@ -3,13 +3,8 @@
 
 #include <QObject>
 
-class NoteObject : public QObject
+class NoteObject
 {
-    Q_OBJECT
-
-    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-    Q_PROPERTY(QString note READ note WRITE setNote NOTIFY noteChanged)
-
     QString m_name, m_note;
 
 
@@ -30,5 +25,8 @@ signals:
 
 public slots:
 };
+
+QDataStream &operator<<(QDataStream &out, const NoteObject &noteObject);
+QDataStream &operator>>(QDataStream &in, NoteObject &noteObject);
 
 #endif // NOTEOBJECT_H
