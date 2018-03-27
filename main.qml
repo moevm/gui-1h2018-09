@@ -144,7 +144,7 @@ ApplicationWindow {
                 // Удаление текущей выбранной заметки
                 onClicked: {
                     notesModel.remove(notesView.currentIndex);
-                    notesView.currentIndex = -1;
+                    notesView.currentIndex = 0;
                 }
             }
 
@@ -179,7 +179,7 @@ ApplicationWindow {
 
                 MenuItem {
                     text: "Export note..."
-
+                    onTriggered: fileSaveNote.open()
                 }
 
                 MenuSeparator { }
@@ -202,6 +202,14 @@ ApplicationWindow {
             }
         }
 
+    }
+
+    FileDialog {
+        id: fileSaveNote
+        title: "Choose a path"
+        selectExisting: false
+        nameFilters: ["Marxx note (*.md)"]
+        onAccepted: exportNote(notesView.currentIndex,fileSaveNote.fileUrl)
     }
 
     FileDialog {
@@ -228,6 +236,13 @@ ApplicationWindow {
     }
 
     function exportLibrary(fileUrl) {
+        console.log(fileUrl);
         notesModel.pack(fileUrl, true)
+    }
+
+    function exportNote(index, fileUrl) {
+        console.log(index);
+        console.log(fileUrl);
+        notesModel.packNote(index, fileUrl, true)
     }
 }

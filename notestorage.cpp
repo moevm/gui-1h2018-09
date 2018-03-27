@@ -122,6 +122,19 @@ void NoteStorage::pack(QString path, bool url = true)
     }
 }
 
+void NoteStorage::packNote(int index, QString path, bool url = true)
+{
+    qDebug() << "Current index" << index;
+    QString filePath = url ? QUrl(path).toLocalFile() : path;
+    QFile file(filePath);
+    file.open(QIODevice::WriteOnly);
+    QDataStream packed(&file);
+
+    int noteSize = sizeof(m_notes.at(index).note());
+    packed << (qint32)noteSize;
+    packed << m_notes.at(index).note();
+}
+
 void NoteStorage::unpack(QString path, bool url = true)
 {
     QString filePath = url ? QUrl(path).toLocalFile() : path;
