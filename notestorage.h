@@ -33,7 +33,6 @@ public:
     Q_INVOKABLE Qt::ItemFlags flags(const QModelIndex &index) const;
 
     Q_INVOKABLE void pack(QString path, bool url);
-    Q_INVOKABLE void packNote(int index, QString path, bool url);
     Q_INVOKABLE void unpack(QString path, bool url);
     Q_INVOKABLE void saveToDefault();
 };

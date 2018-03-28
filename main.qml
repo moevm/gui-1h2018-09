@@ -205,12 +205,12 @@ ApplicationWindow {
     }
 
     FileDialog {
-        id: fileSaveNote
-        title: "Choose a path"
-        selectExisting: false
-        nameFilters: ["Marxx note (*.md)"]
-        onAccepted: exportNote(notesView.currentIndex,fileSaveNote.fileUrl)
-    }
+          id: fileSaveNote
+          title: "Choose a path"
+          selectExisting: false
+          nameFilters: ["Marxx notes (*.md)"]
+          onAccepted: saveNote(fileSaveNote.fileUrl,contentsArea.getText(0,contentsArea.length-1))
+        }
 
     FileDialog {
         id: fileOpenDialog
@@ -240,9 +240,15 @@ ApplicationWindow {
         notesModel.pack(fileUrl, true)
     }
 
-    function exportNote(index, fileUrl) {
-        console.log(index);
-        console.log(fileUrl);
-        notesModel.packNote(index, fileUrl, true)
-    }
+    function saveNote(fileUrl, text) {
+            console.log(fileUrl
+                        );
+            var request = new XMLHttpRequest();
+            request.open("PUT", fileUrl, false);
+            request.send(text);
+            return request.status;
+        }
+
+
+
 }
