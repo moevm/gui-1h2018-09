@@ -4,9 +4,10 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QStandardPaths>
+#include "syntaxhighlighter.h"
 
 NoteStorage::NoteStorage(QObject *parent)
-{
+{   o = new SyntaxHighlighter(this);
     loadFromDefault();
 }
 
@@ -78,7 +79,15 @@ QVariant NoteStorage::data(const QModelIndex &index, int role) const
 }
 
 bool NoteStorage::setData(const QModelIndex &index, const QVariant &value, int role)
-{
+{//   qDebug() << m_notes[index.row()].note();
+//    this->o->highlightBlock(m_notes[index.row()].note());
+    std::string utf8_text = value.toString().toUtf8().constData();
+    this->o->parseline(utf8_text);
+
+//    qDebug() << value.toString();
+//    SyntaxHighlighter::
+//    highlightBlock(value.toString());
+
     if (!index.isValid()) {
         return false;
     }
@@ -93,7 +102,7 @@ bool NoteStorage::setData(const QModelIndex &index, const QVariant &value, int r
     default:
         return false;
     }
-
+this->o->rehighlight();
     emit dataChanged(index, index, QVector<int>() << role);
 
     return true;

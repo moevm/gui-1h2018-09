@@ -5,13 +5,14 @@
 #include <QDataStream>
 #include <QFile>
 #include "noteobject.h"
+#include "syntaxhighlighter.h"
 
 class NoteStorage : public QAbstractListModel
 {
     Q_OBJECT
 
     QList<NoteObject> m_notes;
-
+    SyntaxHighlighter* o ;
     void loadFromDefault();
 public:
     NoteStorage(QObject *parent = 0);

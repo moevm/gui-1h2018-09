@@ -33,8 +33,8 @@ ApplicationWindow {
                     return ""
             }
             renderType: Text.NativeRendering
-            textFormat: Text.RichText
-            font.family: "Arial"
+            textFormat: Text.AutoText
+            font.family: "Consolas"
 
             height: parent.height
 
@@ -44,7 +44,7 @@ ApplicationWindow {
 
             onTextChanged: {
                 if(notesView.currentIndex >= 0) {
-                    notesModel.setData(notesModel.index(notesView.currentIndex, 0), text, 258)
+                    notesModel.setData(notesModel.index(notesView.currentIndex, 0), contentsArea.getText(0, contentsArea.length), 258)
 
                     var txt = contentsArea.getText(0, contentsArea.length > 30 ? 30 : contentsArea.length)
                     //console.log(contentsArea.text)

@@ -22,7 +22,9 @@ int main(int argc, char *argv[])
     QQmlContext *ctxt = engine.rootContext();
     ctxt->setContextProperty("notesModel", &noteStorage);
 
+
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+
     if (engine.rootObjects().isEmpty())
         return -1;
 

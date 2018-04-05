@@ -14,7 +14,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp \
     noteobject.cpp \
-    notestorage.cpp
+    notestorage.cpp \
+    syntaxhighlighter.cpp
 
 RESOURCES += qml.qrc
 
@@ -31,4 +32,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     noteobject.h \
-    notestorage.h
+    notestorage.h \
+    syntaxhighlighter.h
