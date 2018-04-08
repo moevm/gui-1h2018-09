@@ -34,7 +34,7 @@ ApplicationWindow {
             }
             renderType: Text.NativeRendering
             textFormat: Text.RichText
-            font.family: "Arial"
+            font.family: "Verdana"
 
             height: parent.height
 
@@ -56,26 +56,77 @@ ApplicationWindow {
                     processing = true;
                     var p = cursorPosition;
                     var mu = getText(0, length);
+                    const codeBlockRegex = /```[a-z]*[\s\S]*?```/g;
+                    const inlineCodeRegex = /(`)(.*?)\1/g;
+                    const linkRegex = /\[([^\[]+)\]\(([^\)]+)\)/g;
+                    const headingRegex = /\n(#+\s*)(.*)/g;
+                    const strikethroughRegex = /(\~\~)(.*?)\1/g;
+                    const horizontalRuleRegex = /((\-{3,})|(={3,}))/g;
+                    const unorderedListRegex = /(\s*(\-|\+)\s.*)+/g;
+                    const orderedListRegex = /(\s*([0-9]+\.)\s.{5,})+/g;
+                    const paragraphRegex = /\n+(?!<pre>)(?!<h)(?!<ul>)(?!<blockquote)(?!<hr)(?!\t)([^\n]+)\n/g;
+                    const boldRegex = /(\*[\S\s]+\*)/g;
+                    const italicRegex = /(\_[\S\s]+\_)/g;
+                    const header_1 = /^(# .+)$/gm;
+                    const header_2 = /^(## .+)$/gm;
+                    const header_3 = /^(### .+)$/gm;
+                    const header_4 = /^(#### .+)$/gm;
+                    const header_5 = /^(##### .+)$/gm;
+                    const header_6 = /^(###### .+)$/gm;
 
-                    mu = mu.replace(/(\*[\S\s]+\*)/g, function(str) {
-                        return "<b>" + str + "</b>"
+                    mu = mu.replace(boldRegex, function(str) {
+                        return "<b style='font-size: 22px;'>" + str + "</b>"
                     })
 
-                    mu = mu.replace(/(\_[\S\s]+\_)/g, function(str) {
-                        return "<i>" + str + "</i>"
+                    mu = mu.replace(italicRegex, function(str) {
+                        return "<i style='font-size: 22px;'>" + str + "</i>"
                     })
 
-                    mu = mu.replace(/^(# .+)$/gm, function(str) {
-                        return "<span style='color: red; font-size: 30px;'>" + str + "</span>"
+                    mu = mu.replace(header_1, function(str) {
+                        return "<span style='color: black; font-size: 30px;'>" + str + "</span>"
                     })
-                    mu = mu.replace(/^(## .+)$/gm, function(str) {
-                        return "<span style='color:green; font-size: 26px;'>" + str + "</span>"
+                    mu = mu.replace(header_2, function(str) {
+                        return "<span style='color:black; font-size: 26px;'>" + str + "</span>"
                     })
-                    mu = mu.replace(/^(### .+)$/gm, function(str) {
-                        return "<span style='color:blue; font-size: 22px;'>" + str + "</span>"
+                    mu = mu.replace(header_3, function(str) {
+                        return "<span style='color:black; font-size: 22px;'>" + str + "</span>"
                     })
 
+                    mu = mu.replace(header_4, function(str) {
+                        return "<span style='color:black; font-size: 20px;'>" + str + "</span>"
+                    })
 
+                    mu = mu.replace(header_5, function(str) {
+                        return "<span style='color:black; font-size: 18px;'>" + str + "</span>"
+                    })
+
+                    mu = mu.replace(header_6, function(str) {
+                        return "<span style='color:black; font-size: 16px;'>" + str + "</span>"
+                    })
+
+                    mu = mu.replace(linkRegex, function(str) {
+                        return "<a href='http://google.com' style='color:#a485ad; font-size: 22px; cursor: pointer; text-decoration: underline'>" + str + "</a>"
+                    })
+
+                    mu = mu.replace(strikethroughRegex , function(str) {
+                        return '<span style="color: black; font-size: 22px; text-decoration:line-through" >' + str + '</span>';
+                    })
+
+                    mu = mu.replace(codeBlockRegex, function(str) {
+                        return '<span style="color: black; background-color:#c1e0b8;  font-family: Courier New, sans-serif;">' + str + '</span>';
+                    })
+
+                    mu = mu.replace(horizontalRuleRegex , function() {
+                        return '\n<hr />';
+                    })
+
+                    mu = mu.replace(orderedListRegex , function(str) {
+                            return '<span style="color: black; font-family:Arial ; font-weight:500; ">' + str + '</span>';
+                    })
+
+                    mu = mu.replace(unorderedListRegex , function(str) {
+                        return '<span style="color: black; font-family:Arial ; font-weight:500;">' + str + '</span>';
+                     })
                     text = mu;
                     cursorPosition = p;
                     processing = false;
