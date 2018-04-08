@@ -42,6 +42,7 @@ ApplicationWindow {
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             font.pointSize: 14
 
+            property bool processing: false
             onTextChanged: {
                 if(notesView.currentIndex >= 0) {
                     notesModel.setData(notesModel.index(notesView.currentIndex, 0), text, 258)
@@ -51,6 +52,34 @@ ApplicationWindow {
                     notesModel.setData(notesModel.index(notesView.currentIndex, 0), txt == "" ? "New note" : txt, 257)
                 }
 
+                if (!processing) {
+                    processing = true;
+                    var p = cursorPosition;
+                    var mu = getText(0, length);
+
+                    mu = mu.replace(/(\*[\S\s]+\*)/g, function(str) {
+                        return "<b>" + str + "</b>"
+                    })
+
+                    mu = mu.replace(/(\_[\S\s]+\_)/g, function(str) {
+                        return "<i>" + str + "</i>"
+                    })
+
+                    mu = mu.replace(/^(# .+)$/gm, function(str) {
+                        return "<span style='color: red; font-size: 30px;'>" + str + "</span>"
+                    })
+                    mu = mu.replace(/^(## .+)$/gm, function(str) {
+                        return "<span style='color:green; font-size: 26px;'>" + str + "</span>"
+                    })
+                    mu = mu.replace(/^(### .+)$/gm, function(str) {
+                        return "<span style='color:blue; font-size: 22px;'>" + str + "</span>"
+                    })
+
+
+                    text = mu;
+                    cursorPosition = p;
+                    processing = false;
+                }
 
             }
         }
