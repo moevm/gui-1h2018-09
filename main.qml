@@ -163,15 +163,18 @@ ApplicationWindow {
 
         ListView {
             id: notesView
+            y: 30
+            anchors.topMargin: 30
             anchors.bottomMargin: 25
             model: notesModel
             anchors.fill: parent
             highlight: Rectangle { color: "#e6e6e6" }
+            clip: true
 
             delegate: ItemDelegate {
                 width: parent.width
                 clip: true
-                text: name
+                text: model.name
 
                 onClicked: {
                     console.log('index changed')
@@ -299,6 +302,38 @@ ApplicationWindow {
                 MenuItem {
                     text: "About"
                 }
+            }
+        }
+
+        TextField {
+            id: searchField
+            height: 30
+            text: qsTr("")
+            rightPadding: 5
+            leftPadding: 5
+            bottomPadding: 0
+            topPadding: 0
+            anchors.top: parent.top
+            anchors.topMargin: 0
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+            anchors.left: parent.left
+            anchors.leftMargin: 0
+
+            placeholderText: "Search..."
+
+            onTextChanged: {
+                if(text != "") {
+                    notesView.model = [
+                        { name: "name 1" },
+                        { name: "name 2" },
+                        { name: "name 3" }
+                    ]
+                } else {
+                    notesView.model = notesModel
+                }
+
+
             }
         }
 
