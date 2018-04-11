@@ -305,38 +305,48 @@ ApplicationWindow {
             }
         }
 
-        TextField {
-            id: searchField
-            height: 30
-            text: qsTr("")
-            rightPadding: 5
-            leftPadding: 5
-            bottomPadding: 0
-            topPadding: 0
-            anchors.top: parent.top
-            anchors.topMargin: 0
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: parent.left
-            anchors.leftMargin: 0
 
-            placeholderText: "Search..."
+//        TextField {
+//            id: searchField
+//            height: 30
+//            text: qsTr("")
+//            rightPadding: 5
+//            leftPadding: 5
+//            bottomPadding: 0
+//            topPadding: 0
+//            anchors.top: parent.top
+//            anchors.topMargin: 0
+//            anchors.right: parent.right
+//            anchors.rightMargin: 0
+//            anchors.left: parent.left
+//            anchors.leftMargin: 0
 
-            onTextChanged: {
-                if(text != "") {
-                    notesView.model = [
-                        { name: "name 1" },
-                        { name: "name 2" },
-                        { name: "name 3" }
-                    ]
-                } else {
-                    notesView.model = notesModel
-                }
+//            placeholderText: "Search..."
+
+//            onTextChanged: {
+
+////                var replace = text;
+////                var re = new RegExp(replace,"g");
+
+////                contentsArea.text = contentsArea.text.replace(re, function(re) {
+////                        return re
+////                    });
+
+////console.log(contentsArea.text);
+////                }
+//                //console.log(a);
+//                if(text !== "") {
+//                    for(var i = 0; i < notesModel.rowCount(data); i++)
+//                        console.log(notesModel.data(notesModel.index(notesView, 0), 258));
+//               } else {
+//                  notesView.model = notesModel
+//                }
 
 
-            }
-        }
 
+//        }
+
+//}
     }
 
     FileDialog {
