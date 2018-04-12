@@ -164,7 +164,7 @@ ApplicationWindow {
         ListView {
             id: notesView
             y: 30
-            anchors.topMargin: 30
+            anchors.topMargin: 0
             anchors.bottomMargin: 25
             model: notesModel
             anchors.fill: parent
@@ -328,17 +328,20 @@ ApplicationWindow {
 ////                var replace = text;
 ////                var re = new RegExp(replace,"g");
 
-////                contentsArea.text = contentsArea.text.replace(re, function(re) {
-////                        return re
-////                    });
+//                contentsArea.text = contentsArea.text.replace(re, function(re) {
+//                        return re
+//                   });
 
-////console.log(contentsArea.text);
-////                }
+//console.log(contentsArea.text);
+///               }
 //                //console.log(a);
 //                if(text !== "") {
 //                    for(var i = 0; i < notesModel.rowCount(data); i++)
+
 //                        console.log(notesModel.data(notesModel.index(notesView, 0), 258));
+
 //               } else {
+
 //                  notesView.model = notesModel
 //                }
 
