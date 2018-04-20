@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
 
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
 
     NoteStorage noteStorage;
     //noteStorage.append("New note", "");
@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
 
     QQmlContext *ctxt = engine.rootContext();
     ctxt->setContextProperty("notesModel", &noteStorage);
+    ctxt->setContextProperty("filteredModel", &noteStorage);
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty())

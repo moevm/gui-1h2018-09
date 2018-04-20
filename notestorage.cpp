@@ -4,7 +4,10 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QStandardPaths>
-
+#include <QRegExp>
+#include <QTextEdit>
+#include <QApplication>
+#include <QWidget>
 NoteStorage::NoteStorage(QObject *parent)
 {
     loadFromDefault();
@@ -26,6 +29,7 @@ void NoteStorage::loadFromDefault()
 
 void NoteStorage::append(QString name, QString note)
 {
+    restore();
     beginInsertRows(QModelIndex(), m_notes.size(), m_notes.size());
     m_notes.append(NoteObject(name, note));
     endInsertRows();
@@ -75,6 +79,81 @@ QVariant NoteStorage::data(const QModelIndex &index, int role) const
     default:
         return QVariant();
     }
+}
+
+void NoteStorage::swapLists() {
+
+    int m_notesLength = m_notes.size();
+    int filteredLength = filtered.size();
+
+    for(int i = 0; i < m_notesLength; i++) {
+        filtered.push_front(m_notes[i]);
+    }
+
+    for(int i = 0; i < filteredLength; i++) {
+        m_notes.push_front(filtered.takeLast());
+    }
+
+    for(int i = 0; i < m_notesLength; i++) {
+        m_notes.takeLast();
+}
+}
+
+
+QList<QString> NoteStorage::pureData() const
+{
+    QWidget *parent = nullptr;
+    QTextEdit *curr = new QTextEdit(parent);
+    QList<QString> *notes = new QList<QString>;
+
+    for(int i = 0; i < m_notes.size(); i++) {
+        curr->setHtml(m_notes[i].note());
+        QString currNote = curr->toPlainText();
+        notes->push_front(currNote);
+
+
+    }
+
+    return *notes;
+}
+
+
+void NoteStorage::restore() {
+    qDebug() << "Chistim filtered, apendim m_notes";
+    for(int i = 0; i < filtered.size(); i++){
+     m_notes.append(filtered[i]);
+     qDebug() << filtered[i].name();
+    }
+     filtered.clear();
+}
+
+void NoteStorage::search(QString text)
+{
+    restore();
+    QWidget *parent = nullptr;
+    QTextEdit *editor = new QTextEdit(parent) ;
+    QList<int> indexes;
+    QRegExp templ(text);
+    for(int i = 0; i < m_notes.size(); i++){
+        qDebug() << "ELEMENT : > > >  " << m_notes[i].name();
+        editor->setHtml(m_notes[i].note());
+        qDebug() << "TEXT > > >  " << editor->toPlainText();
+        int pos = templ.indexIn(editor->toPlainText());
+        if(pos != -1) {
+            qDebug() << "Match > > >  " << m_notes[i].name() << " " << m_notes.size();
+            filtered.append(m_notes[i]);
+            m_notes.removeAt(i);
+            i--;
+
+
+        }
+
+    }
+    /* swap lists */
+
+    swapLists();
+
+    /*----------*/
 }
 
 bool NoteStorage::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -143,6 +222,10 @@ void NoteStorage::unpack(QString path, bool url = true)
 
 void NoteStorage::saveToDefault()
 {
+    for(int i = 0; i < filtered.size(); i++){
+     m_notes.append(filtered[i]);
+     qDebug() << filtered[i].note();
+    }
     QString defaultName = "default.marxxlib";
     QString defaultFilePath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/" + defaultName;
 

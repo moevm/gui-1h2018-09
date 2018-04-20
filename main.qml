@@ -164,7 +164,7 @@ ApplicationWindow {
         ListView {
             id: notesView
             y: 30
-            anchors.topMargin: 0
+            anchors.topMargin: 35
             anchors.bottomMargin: 25
             model: notesModel
             anchors.fill: parent
@@ -306,50 +306,37 @@ ApplicationWindow {
         }
 
 
-//        TextField {
-//            id: searchField
-//            height: 30
-//            text: qsTr("")
-//            rightPadding: 5
-//            leftPadding: 5
-//            bottomPadding: 0
-//            topPadding: 0
-//            anchors.top: parent.top
-//            anchors.topMargin: 0
-//            anchors.right: parent.right
-//            anchors.rightMargin: 0
-//            anchors.left: parent.left
-//            anchors.leftMargin: 0
+        TextField {
+            id: searchField
+            height: 30
+            text: qsTr("")
+            rightPadding: 5
+            leftPadding: 5
+            bottomPadding: 0
+            topPadding: 0
+            anchors.top: parent.top
+            anchors.topMargin: 0
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+            anchors.left: parent.left
+            anchors.leftMargin: 0
 
-//            placeholderText: "Search..."
+            placeholderText: "Search..."
 
-//            onTextChanged: {
+            onTextChanged: {
+                        if(text !== "") {
+                               notesModel.restore();
+                               notesModel.search(text);
+                               notesView.model = 0;
+                               notesView.model = notesModel
+                        } else {
+                             notesModel.restore();
+                             notesView.model = 0;
+                             notesView.model = notesModel
+                        }
+                       }
 
-////                var replace = text;
-////                var re = new RegExp(replace,"g");
-
-//                contentsArea.text = contentsArea.text.replace(re, function(re) {
-//                        return re
-//                   });
-
-//console.log(contentsArea.text);
-///               }
-//                //console.log(a);
-//                if(text !== "") {
-//                    for(var i = 0; i < notesModel.rowCount(data); i++)
-
-//                        console.log(notesModel.data(notesModel.index(notesView, 0), 258));
-
-//               } else {
-
-//                  notesView.model = notesModel
-//                }
-
-
-
-//        }
-
-//}
+}
     }
 
     FileDialog {
@@ -397,6 +384,24 @@ ApplicationWindow {
             return request.status;
         }
 
+    function getFilteredModel(text) {
+        var storage = notesModel.pureData();
+        var filtered = [];
+        for(var i = 0; i < storage.length; i++) {
+           if(storage[i].indexOf(text) !== -1 && !(filtered.indexOf(storage[i]) > -1)) {
+               filtered.push({name : "Note_name", note: storage[i], index: i});
+           }
+//           if(filtered.indexOf(storage[i]) > -1 && storage[i].indexOf(text) === -1) {
+//               for (var i = filtered.length - 1; i >=0; i--) {
+//                   if (filtered[i] === strorage[i]) {
+//                       array.splice(i, 1);
+//                   }
+//               }
+//           }
 
+        }
+        console.log(filtered);
+        return filtered;
+    }
 
 }
