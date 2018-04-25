@@ -5,6 +5,7 @@ import QtQuick.Controls.Material 2.2
 import QtQuick.Layouts 1.3
 import QtQuick.Dialogs 1.2
 
+
 ApplicationWindow {
     id: window
     visible: true
@@ -36,8 +37,8 @@ ApplicationWindow {
         const unorderedListRegex = /(\s*(\-|\+)\s.*)+/g;
         const orderedListRegex = /(\s*([0-9]+\.)\s.{5,})+/g;
         const paragraphRegex = /\n+(?!<pre>)(?!<h)(?!<ul>)(?!<blockquote)(?!<hr)(?!\t)([^\n]+)\n/g;
-        const boldRegex = /(\*([^*\n])+\*)/gm;
-        const italicRegex = /(\_([^*\n])+\_)/gm;
+        const boldRegex = /(\*([^*\n])+\*)/g;
+        const italicRegex = /(\_([^*\n])+\_)/g;
         const header_1 = /^(# .+)$/gm;
         const header_2 = /^(## .+)$/gm;
         const header_3 = /^(### .+)$/gm;
@@ -300,7 +301,8 @@ ApplicationWindow {
                 MenuSeparator { }
 
                 MenuItem {
-                    text: "About"
+                    text: "EXPORT AS HTML"
+                    onTriggered: fileExportAsHtml.open()
                 }
             }
         }
@@ -362,6 +364,14 @@ ApplicationWindow {
         onAccepted: exportLibrary(fileSaveDialog.fileUrl)
     }
 
+    FileDialog {
+              id: fileExportAsHtml
+              title: "Choose a path"
+              selectExisting: false
+              nameFilters: ["Html document (*.html)"]
+              onAccepted: exportToHtml(fileExportAsHtml.fileUrl, contentsArea.getText(0,contentsArea.length-1))
+            }
+
     function importLibrary(fileUrl) {
         notesModel.unpack(fileUrl, true)
 
@@ -403,5 +413,39 @@ ApplicationWindow {
         console.log(filtered);
         return filtered;
     }
+
+    function exportToHtml(fileUrl, txt) {
+        var notes = notesModel.pureData().reverse();
+        var curr = notes[notesView.currentIndex];
+        console.log(curr);
+        function mmd(str) {
+            //lists
+            str = str.replace(/(-\s[\s\S]*-\s.*)\n/g, " <ul>$1</ul> ");
+            str = str.replace(/(\d\.\s[\s\S]*\d\.\s.*)\n/g, " <ol>$1</ol> ");
+            str = str.replace(/-\s(.*)/gm, " <li>$1</li> ");
+            str = str.replace(/\d\.\s(.*)/gm, " <li>$1</li> ");
+
+            str = str.replace(/\*\s(.*)\*/g, " <b>$1</b> ");
+            str = str.replace(/\_(.*)\_/g, " <i>$1</i>  ");
+            str = str.replace(/```([a-z]*[\s\S]*?)```/g, " <code> $1 </code>");
+            str = str.replace(/~~\s(.*)~~/g, "  <strike> $1 </strike>  ");
+            str = str.replace(/\[([^\[]+)\]\(([^\)]+)\)/g, "<a href='$2'>$1</a>");
+
+            str = str.replace(/######\s(.*)/g, "<h6> $1 </h6> ");
+            str = str.replace(/#####\s(.*)/g, "<h5>$1</h5> ");
+            str = str.replace(/####\s(.*)/g, "<h4>$1</h4> ");
+            str = str.replace(/###\s(.*)/g, " <h3>$1</h3>");
+            str = str.replace(/##\s(.*)/g, " <h2>$1</h2>");
+            str = str.replace(/#\s(.*)/g, " <h1>$1</h1> ");
+
+
+            return str
+        };
+        var request = new XMLHttpRequest();
+        request.open("PUT", fileUrl, false);
+        request.send(mmd(curr));
+        return request.status;
+
+        }
 
 }
