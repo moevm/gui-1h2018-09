@@ -419,16 +419,18 @@ ApplicationWindow {
         var curr = notes[notesView.currentIndex];
         console.log(curr);
         function mmd(str) {
+            //parse line
+            str = str.replace(/^(.*)$/gm, " <p>$1</p> ");
             //lists
             str = str.replace(/(-\s[\s\S]*-\s.*)\n/g, " <ul>$1</ul> ");
             str = str.replace(/(\d\.\s[\s\S]*\d\.\s.*)\n/g, " <ol>$1</ol> ");
             str = str.replace(/-\s(.*)/gm, " <li>$1</li> ");
             str = str.replace(/\d\.\s(.*)/gm, " <li>$1</li> ");
 
-            str = str.replace(/\*\s(.*)\*/g, " <b>$1</b> ");
+            str = str.replace(/\*(.*)\*/g, " <b>$1</b> ");
             str = str.replace(/\_(.*)\_/g, " <i>$1</i>  ");
             str = str.replace(/```([a-z]*[\s\S]*?)```/g, " <code> $1 </code>");
-            str = str.replace(/~~\s(.*)~~/g, "  <strike> $1 </strike>  ");
+            str = str.replace(/~~(.*)~~/g, "  <strike> $1 </strike>  ");
             str = str.replace(/\[([^\[]+)\]\(([^\)]+)\)/g, "<a href='$2'>$1</a>");
 
             str = str.replace(/######\s(.*)/g, "<h6> $1 </h6> ");
