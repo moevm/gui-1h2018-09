@@ -111,6 +111,42 @@ ApplicationWindow {
         anchors.leftMargin: 200
         anchors.fill: parent
 
+        Popup {
+                id: popup
+                x: 90
+                y: 90
+                width: 400
+                height: 200
+                modal: true
+                focus: true
+                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+                Label {
+                    text: "Your note is avaliable at the following URL:"
+                    x: 50
+                    y: 30
+                    font.pixelSize: 14
+                }
+
+                TextEdit {
+                    id: textBin
+                    text: ""
+                    x:20
+                    y: 70
+                    font.family: "Verdana"
+                    font.pointSize: 16
+                    readOnly: true
+                    font.italic: true
+                    wrapMode: Text.WordWrap
+                    selectByMouse: true
+                }
+                Button {
+                        text: "OK"
+                        x: 155
+                        y: 132
+                        onClicked: popup.close()
+                    }
+            }
+
         TextArea {
             id: contentsArea
             text: {
@@ -304,6 +340,13 @@ ApplicationWindow {
                     text: "EXPORT AS HTML"
                     onTriggered: fileExportAsHtml.open()
                 }
+
+                MenuSeparator { }
+
+                MenuItem {
+                    text: "Publish on PasteBin"
+                    onTriggered: publish()
+                }
             }
         }
 
@@ -420,7 +463,7 @@ ApplicationWindow {
         console.log(curr);
         function mmd(str) {
             //parse line
-            str = str.replace(/^(.*)$/gm, " <p>$1</p> ");
+//            str = str.replace(/^(.*)$/gm, " <p>$1</p> ");
             //lists
             str = str.replace(/(-\s[\s\S]*-\s.*)\n/g, " <ul>$1</ul> ");
             str = str.replace(/(\d\.\s[\s\S]*\d\.\s.*)\n/g, " <ol>$1</ol> ");
@@ -449,5 +492,34 @@ ApplicationWindow {
         return request.status;
 
         }
+
+    function publish(){
+
+        var notes = notesModel.pureData().reverse();
+        var curr = notes[notesView.currentIndex];
+
+        var API_DEV_KEY = '8d665968224c817d96ed9f17030a9d97';
+        var API_PAST_TEXT = curr;
+        var API_PAST_PRIVATE = '0';
+        var API_PAST_NAME = "Note";
+        var API_PAST_EXPIRE_DATE = '10M';
+        var API_PAST_FORMAT = "Smarty";
+        var API_USER_KEY = '';
+
+        var URL = 'http://pastebin.com/api/api_post.php';
+        var xhr = new XMLHttpRequest();
+        var body = 'api_option=paste' + '&api_user_key=' + '&api_paste_private=' + API_PAST_PRIVATE +
+                '&api_paste_name=' + API_PAST_NAME + '&api_paste_expire_date=' + API_PAST_EXPIRE_DATE +
+                '&api_paste_format' + API_PAST_FORMAT + '&api_dev_key=8d665968224c817d96ed9f17030a9d97'+ '&api_paste_code=' + API_PAST_TEXT;
+
+        xhr.open("POST", URL, false);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.send(body);
+        console.log(body);
+        console.log(xhr.responseText);
+        textBin.text = xhr.responseText;
+        popup.open();
+
+    }
 
 }
