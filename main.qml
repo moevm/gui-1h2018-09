@@ -121,7 +121,7 @@ ApplicationWindow {
                 focus: true
                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
                 Label {
-                    text: "Your note is avaliable at the following URL:"
+                    text: "The following URL has been copied to your clipboard:"
                     x: 50
                     y: 30
                     font.pixelSize: 14
@@ -135,6 +135,7 @@ ApplicationWindow {
                     font.family: "Verdana"
                     font.pointSize: 16
                     readOnly: true
+
                     font.italic: true
                     wrapMode: Text.WordWrap
                     selectByMouse: true
@@ -337,7 +338,7 @@ ApplicationWindow {
                 MenuSeparator { }
 
                 MenuItem {
-                    text: "EXPORT AS HTML"
+                    text: "Export as HTML..."
                     onTriggered: fileExportAsHtml.open()
                 }
 
@@ -519,6 +520,10 @@ ApplicationWindow {
         console.log(xhr.responseText);
         textBin.text = xhr.responseText;
         popup.open();
+        textBin.selectAll();
+        textBin.copy();
+
+
 
     }
 
